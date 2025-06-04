@@ -3,1009 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Explainer Chatbot</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-container {
-            /* max-width: 1200px; */
-            width: 100%;
-            margin: 0 auto;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
-        }
-
-        .chat-header {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .chat-header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .chat-header p {
-            opacity: 0.9;
-            font-size: 14px;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background: #f8f9fa;
-            scroll-behavior: smooth;
-        }
-
-        .message {
-            margin-bottom: 20px;
-            animation: fadeInUp 0.3s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.user {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .message.bot {
-            display: flex;
-            justify-content: flex-start;
-        }
-
-        .message-content {
-            max-width: 70%;
-            padding: 15px 20px;
-            border-radius: 20px;
-            position: relative;
-            word-wrap: break-word;
-        }
-
-        .message.user .message-content {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: white;
-            border-bottom-right-radius: 5px;
-        }
-
-        .message.bot .message-content {
-            background: white;
-            color: #333;
-            border: 1px solid #e0e0e0;
-            border-bottom-left-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .typing-indicator {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 15px 20px;
-            background: white;
-            border-radius: 20px;
-            border-bottom-left-radius: 5px;
-            max-width: 70%;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #007bff;
-            animation: typing 1.4s infinite ease-in-out;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: 0.5;
-            }
-            30% {
-                transform: translateY(-10px);
-                opacity: 1;
-            }
-        }
-
-        .chat-input-container {
-            padding: 20px;
-            background: white;
-            border-top: 1px solid #e0e0e0;
-        }
-
-       .chat-input-wrapper {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    padding: 10px;
-    box-sizing: border-box;
-    max-width: 100%;
-    width: 100%;
-    flex-wrap: nowrap;
-}
-
-/* Make textarea grow and shrink smoothly */
-.chat-input {
-    flex: 1;
-    padding: 15px 20px;
-    border: 2px solid #e0e0e0;
-    border-radius: 25px;
-    font-size: 16px;
-    resize: none;
-    min-height: 50px;
-    max-height: 120px;
-    outline: none;
-    transition: border-color 0.3s ease;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.chat-input:focus {
-    border-color: #007bff;
-}
-
-.send-button {
-    flex-shrink: 0;
-    width: 50px;
-    height: 50px;
-    border: none;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    font-size: 18px;
-}
-
-.send-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
-}
-
-.send-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 600px) {
-    .chat-input-wrapper {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-
-    .chat-input {
-        font-size: 14px;
-        border-radius: 20px;
-    }
-
-    .send-button {
-        width: 100%;
-        height: 45px;
-        border-radius: 20px;
-        font-size: 16px;
-    }
-}
-
-        
-
-        .video-container {
-            margin-top: 15px;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .video-container video {
-            width: 100%;
-            height: auto;
-        }
-
-        .progress-container {
-            background: #f0f0f0;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 10px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #007bff, #0056b3);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-            width: 0%;
-        }
-
-        .progress-text {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
-            text-align: center;
-        }
-
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
-            border: 1px solid #f5c6cb;
-        }
-
-        .canvas-container {
-            display: none;
-            margin-top: 15px;
-        }
-
-        #canvas {
-            width: 100%;
-            max-width: 640px;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        @media (max-width: 768px) {
-            .chat-container {
-                height: 100vh;
-                margin: 0;
-                border-radius: 0;
-            }
-
-            .message-content {
-                max-width: 85%;
-            }
-
-            .chat-header h1 {
-                font-size: 20px;
-            }
-
-            .chat-input-wrapper {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .send-button {
-                align-self: flex-end;
-            }
-        }
-    </style>
+    <title>Explainer AI – Turn Prompts into Explainer Videos</title>
+    <script src="./t.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ccapture.js-npmfixed@1.1.0/build/CCapture.all.min.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <h1>🎬 AI Video Explainer</h1>
-            <p>Ask me to create an educational video on any topic!</p>
-        </div>
+<body class="font-inter min-h-screen overflow-hidden">
+    <!-- Main App Container -->
+    <div class="container mx-auto px-4 h-screen flex flex-col py-4 lg:py-6 max-w-7xl">
+        <!-- Header -->
+        <header class="mobile-header flex justify-between items-center mb-4 lg:mb-6 py-2 lg:py-0 bg-transparent backdrop-blur-sm">
+            <div class="flex items-center space-x-2 lg:space-x-3">
+                <div class="p-1.5 lg:p-2 rounded-lg glass-card">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 lg:h-8 lg:w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h1 class="text-lg lg:text-2xl font-bold gradient-text">Explainer AI</h1>
+            </div>
+            <button class="px-3 py-2 lg:px-4 lg:py-2 rounded-lg glass-card hover:bg-white/10 transition flex items-center text-sm lg:text-base">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 lg:h-5 lg:w-5 mr-1 lg:mr-2 text-purple-300" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                </svg>
+                <span class="font-medium">Upgrade</span>
+            </button>
+        </header>
 
-        <div class="chat-messages" id="chatMessages">
-            <div class="message bot">
-                <div class="message-content">
-                    👋 Hi! I'm your AI video creator. Ask me to explain any topic and I'll generate a custom educational video for you!
-                    <br><br>
-                    <strong>Example:</strong> "Explain quantum physics" or "What is photosynthesis?"
+        <!-- Main Content Area -->
+        <div class="flex flex-1 overflow-hidden gap-0 lg:gap-6">
+            <!-- Desktop Sidebar - Hidden on mobile -->
+            <div class="hidden lg:flex w-1/3 flex-col space-y-6 pr-2 overflow-y-auto">
+                <!-- Welcome Card -->
+                <div class="glass-card rounded-xl p-6">
+                    <h2 class="text-xl font-semibold mb-3 gradient-text">✨ Convert Topics into Videos</h2>
+                    <p class="text-purple-100 mb-4">Welcome to Explainer AI! I can transform any topic into an engaging educational video. What would you like me to explain today?</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center text-purple-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <span>AI-powered content generation</span>
+                        </div>
+                        <div class="flex items-center text-purple-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Professional video quality</span>
+                        </div>
+                        <div class="flex items-center text-purple-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Synchronized audio narration</span>
+                        </div>
+                        <div class="flex items-center text-purple-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Instant download</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop Examples Card -->
+                <div class="glass-card rounded-xl p-6">
+                    <h2 class="text-xl font-semibold mb-3 gradient-text">🚀 Quick Examples</h2>
+                    <p class="text-purple-100 mb-4">Try one of these popular topics to get started:</p>
+                    
+                    <div class="grid grid-cols-1 gap-3">
+                        <button class="example-btn bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg p-4 text-left transition">
+                            <h3 class="font-medium">Explain quantum physics</h3>
+                            <p class="text-sm text-purple-200 mt-1">Understand the fundamentals of quantum mechanics</p>
+                        </button>
+                        <button class="example-btn bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg p-4 text-left transition">
+                            <h3 class="font-medium">How does photosynthesis work?</h3>
+                            <p class="text-sm text-purple-200 mt-1">Learn how plants convert sunlight into energy</p>
+                        </button>
+                        <button class="example-btn bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg p-4 text-left transition">
+                            <h3 class="font-medium">The history of artificial intelligence</h3>
+                            <p class="text-sm text-purple-200 mt-1">Explore AI's evolution from inception to today</p>
+                        </button>
+                        <button class="example-btn bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg p-4 text-left transition">
+                            <h3 class="font-medium">Understanding blockchain technology</h3>
+                            <p class="text-sm text-purple-200 mt-1">Demystify how blockchain and cryptocurrencies work</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Floating AI Character -->
+                <div class="mt-auto text-center pt-6">
+                    <div class="float-animation inline-block">
+                        <div class="glass-card p-4 rounded-full inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-purple-300" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <p class="mt-2 text-purple-200 text-sm">Ready to create your video!</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="chat-input-container">
-            <div class="chat-input-wrapper">
-                <textarea 
-                    id="chatInput" 
-                    class="chat-input" 
-                    placeholder="Ask me to explain any topic..."
-                    rows="1"
-                ></textarea>
-                <button id="sendButton" class="send-button">
-                    <span>➤</span>
-                </button>
+            <!-- Chat Interface -->
+            <div class="flex-1 flex flex-col w-full lg:w-auto">
+                <div class="glass-card rounded-xl flex-1 flex flex-col overflow-hidden">
+                    <!-- Chat Header -->
+                    <div class="border-b border-white/10 p-3 lg:p-4 bg-gradient-to-r from-purple-900/30 to-blue-900/30">
+                        <div class="flex items-center">
+                            <div class="bg-white/10 p-1.5 lg:p-2 rounded-lg mr-2 lg:mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 lg:h-6 lg:w-6 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-base lg:text-lg font-semibold">Video Creation Assistant</h2>
+                                <p class="text-xs lg:text-sm text-purple-200">Ask me to create an educational video on any topic!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Messages -->
+                    <div id="chatMessages" class="flex-1 overflow-y-auto p-3 lg:p-4 bg-gradient-to-b from-slate-900/50 to-purple-900/20">
+                        <!-- Welcome Message -->
+                        <div class="message bot mb-4 fade-in">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 bg-white/10 p-1.5 lg:p-2 rounded-full mr-2 lg:mr-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 lg:h-5 lg:w-5 text-purple-300" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="bg-white/5 p-3 lg:p-4 rounded-lg max-w-[85%] backdrop-blur-sm">
+                                    <p class="text-white text-sm lg:text-base">👋 Hi! I'm your AI video creator. Ask me to explain any topic and I'll generate a custom educational video for you!</p>
+                                    <div class="mt-2 text-xs lg:text-sm text-purple-200">
+                                        <strong>Example:</strong> "Explain quantum physics" or "What is photosynthesis?"
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mobile Quick Examples - Only visible on mobile -->
+                        <div class="lg:hidden mb-4 slide-in-up" id="mobileExamples">
+                            <div class="text-center mb-3">
+                                <h3 class="text-sm font-semibold gradient-text mb-1">🚀 Quick Examples</h3>
+                                <p class="text-xs text-purple-200">Tap any topic to get started</p>
+                            </div>
+                            
+                            <div class="mobile-examples-grid">
+                                <div class="mobile-example-card mobile-example-btn" data-prompt="Explain quantum physics">
+                                    <div class="text-2xl mb-1">⚛️</div>
+                                    <div class="text-xs font-medium">Quantum Physics</div>
+                                </div>
+                                <div class="mobile-example-card mobile-example-btn" data-prompt="How does photosynthesis work?">
+                                    <div class="text-2xl mb-1">🌱</div>
+                                    <div class="text-xs font-medium">Photosynthesis</div>
+                                </div>
+                                <div class="mobile-example-card mobile-example-btn" data-prompt="The history of artificial intelligence">
+                                    <div class="text-2xl mb-1">🤖</div>
+                                    <div class="text-xs font-medium">AI History</div>
+                                </div>
+                                <div class="mobile-example-card mobile-example-btn" data-prompt="Understanding blockchain technology">
+                                    <div class="text-2xl mb-1">⛓️</div>
+                                    <div class="text-xs font-medium">Blockchain</div>
+                                </div>
+                                <div class="mobile-example-card mobile-example-btn" data-prompt="How do black holes work?">
+                                    <div class="text-2xl mb-1">🕳️</div>
+                                    <div class="text-xs font-medium">Black Holes</div>
+                                </div>
+                                <div class="mobile-example-card mobile-example-btn" data-prompt="Explain DNA structure">
+                                    <div class="text-2xl mb-1">🧬</div>
+                                    <div class="text-xs font-medium">DNA Structure</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="mobile-chat-input border-t border-white/10 p-3 lg:p-4 bg-white/5 backdrop-blur-sm">
+                        <div class="sm:relative flex items-center justify-center">
+                            <textarea 
+                                id="chatInput" 
+                                class="w-full bg-white/5 border border-white/10 rounded-lg pl-3 pr-12 py-2.5 lg:pl-4 lg:pr-12 lg:py-3 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none resize-none text-white placeholder-purple-300 transition text-sm lg:text-base" 
+                                placeholder="Ask me to explain any topic..."
+                                rows="1"
+                            ></textarea>
+                            <button id="sendButton" class="ml-[5px] sm:absolute flex items-center justify-center right-2 bottom-2 lg:right-3 lg:bottom-[0.45rem] bg-purple-600 hover:bg-purple-700 text-white p-2 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-[25px] w-[25px] md:h-4 md:w-4 lg:h-5 lg:w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-purple-300 mt-2">AI Video Creator may produce inaccurate information. Consider verifying important facts.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Hidden Canvas for Video Generation -->
     <canvas id="canvas" width="1280" height="720" style="display: none;"></canvas>
 
-    <script>
-        class ChatBot {
-            constructor() {
-                this.chatID = this.generateChatID();
-                this.messages = document.getElementById('chatMessages');
-                this.input = document.getElementById('chatInput');
-                this.sendButton = document.getElementById('sendButton');
-                this.canvas = document.getElementById('canvas');
-                this.ctx = this.canvas.getContext('2d');
-                
-                this.isProcessing = false;
-                this.capturer = null;
-                this.audioElement = null;
-                
-                this.initializeEventListeners();
-            }
-
-            generateChatID() {
-                return 'chat_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-                // return "testID"
-            }
-
-            initializeEventListeners() {
-                this.sendButton.addEventListener('click', () => this.sendMessage());
-                
-                this.input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        this.sendMessage();
-                    }
-                });
-
-                this.input.addEventListener('input', () => {
-                    this.autoResize();
-                });
-            }
-
-            autoResize() {
-                this.input.style.height = 'auto';
-                this.input.style.height = Math.min(this.input.scrollHeight, 120) + 'px';
-            }
-
-            async sendMessage() {
-                const message = this.input.value.trim();
-                if (!message || this.isProcessing) return;
-
-                this.addMessage(message, 'user');
-                this.input.value = '';
-                this.autoResize();
-                this.setProcessing(true);
-
-                this.showTypingIndicator();
-
-                try {
-                    await this.processVideoRequest(message);
-                } catch (error) {
-                    this.hideTypingIndicator();
-                    this.addMessage(`Sorry, I encountered an error: ${error.message}`, 'bot', 'error');
-                } finally {
-                    this.setProcessing(false);
-                }
-            }
-
-            addMessage(content, sender, type = 'normal') {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${sender}`;
-                
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'message-content';
-                
-                if (type === 'error') {
-                    contentDiv.innerHTML = `<div class="error-message">${content}</div>`;
-                } else {
-                    contentDiv.innerHTML = content;
-                }
-                
-                messageDiv.appendChild(contentDiv);
-                this.messages.appendChild(messageDiv);
-                this.scrollToBottom();
-                
-                return contentDiv;
-            }
-
-            showTypingIndicator() {
-                const typingDiv = document.createElement('div');
-                typingDiv.className = 'message bot';
-                typingDiv.id = 'typingIndicator';
-                
-                const typingContent = document.createElement('div');
-                typingContent.className = 'typing-indicator';
-                typingContent.innerHTML = `
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                `;
-                
-                typingDiv.appendChild(typingContent);
-                this.messages.appendChild(typingDiv);
-                this.scrollToBottom();
-            }
-
-            hideTypingIndicator() {
-                const typingIndicator = document.getElementById('typingIndicator');
-                if (typingIndicator) {
-                    typingIndicator.remove();
-                }
-            }
-
-            setProcessing(processing) {
-                this.isProcessing = processing;
-                this.sendButton.disabled = processing;
-                this.input.disabled = processing;
-            }
-
-            scrollToBottom() {
-                setTimeout(() => {
-                    this.messages.scrollTop = this.messages.scrollHeight;
-                }, 100);
-            }
-
-            async processVideoRequest(prompt) {
-                // Step 1: Send request to backend
-                const response = await fetch('https://explainerai-backend.onrender.com/api/explain', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        prompt: prompt,
-                        chatID: this.chatID
-                    })
-                });
-
-                const result = await response.json();
-                
-                if (!result.success) {
-                    throw new Error(result.message || 'Failed to generate content');
-                }
-
-                this.hideTypingIndicator();
-                
-                // Step 2: Show progress and start video generation
-                const botMessageContent = this.addMessage(`
-                    🎬 Great! I'm creating a video about "${prompt}". This will take a moment...
-                    <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                        <div class="progress-text" id="progressText">Fetching content...</div>
-                    </div>
-                `, 'bot');
-
-                try {
-                    // Step 3: Fetch JSON and audio
-                    await this.fetchAndGenerateVideo(prompt, botMessageContent);
-                } catch (error) {
-                    botMessageContent.innerHTML = `
-                        <div class="error-message">
-                            ❌ Failed to generate video: ${error.message}
-                        </div>
-                    `;
-                }
-            }
-
-            async fetchAndGenerateVideo(prompt, messageContainer) {
-                const progressFill = messageContainer.querySelector('#progressFill');
-                const progressText = messageContainer.querySelector('#progressText');
-
-                // Update progress
-                const updateProgress = (percent, text) => {
-                    if (progressFill) progressFill.style.width = `${percent}%`;
-                    if (progressText) progressText.textContent = text;
-                };
-
-                updateProgress(20, 'Fetching video content...');
-
-                // Fetch JSON
-                const jsonUrl = `https://explainerai-backend.onrender.com/${this.chatID}/json/j1.json`;
-                const jsonResponse = await fetch(jsonUrl);
-                const slidesData = await jsonResponse.json();
-
-                updateProgress(40, 'Loading audio...');
-
-                // Fetch and load audio
-                const audioUrl = `https://explainerai-backend.onrender.com/${this.chatID}/merged/output.wav`;
-                const audioElement = new Audio();
-                await new Promise((resolve, reject) => {
-                    audioElement.onloadeddata = resolve;
-                    audioElement.onerror = reject;
-                    audioElement.src = audioUrl;
-                });
-
-                updateProgress(60, 'Generating video frames...');
-
-                // Generate video
-                const videoBlob = await this.generateVideo(slidesData, (progress) => {
-                    updateProgress(60 + (progress * 0.35), `Rendering video... ${Math.round(progress)}%`);
-                });
-
-                updateProgress(100, 'Video ready!');
-
-                // Step 4: Create final video with audio
-                this.createFinalVideoPlayer(videoBlob, audioElement, prompt, messageContainer);
-            }
-
-            async generateVideo(slidesData, progressCallback) {
-                return new Promise((resolve, reject) => {
-                    try {
-                        // Convert slides format
-                        let currentTime = 0;
-                        const slides = slidesData.map(slide => {
-                            const slideData = {
-                                start: currentTime,
-                                end: currentTime + slide.time,
-                                content: slide.content
-                            };
-                            currentTime += slide.time;
-                            return slideData;
-                        });
-
-                        const totalDuration = currentTime;
-                        const fps = 2;
-                        const frameDuration = 1000 / fps;
-                        let virtualTime = 0;
-                        let frameCount = 0;
-
-                        // Initialize capturer
-                        this.capturer = new CCapture({
-                            format: 'webm',
-                            framerate: fps,
-                            quality: 85,
-                            verbose: false
-                        });
-
-                        this.capturer.start();
-
-                        const renderFrame = () => {
-                            const currentSlide = this.getCurrentSlide(slides, virtualTime);
-                            
-                            if (currentSlide) {
-                                this.renderSlide(currentSlide.content);
-                            } else {
-                                this.ctx.fillStyle = "#000";
-                                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                            }
-
-                            this.capturer.capture(this.canvas);
-                            virtualTime += frameDuration;
-                            frameCount++;
-
-                            const progress = (virtualTime / totalDuration) * 100;
-                            progressCallback(Math.min(progress, 100));
-
-                            if (virtualTime < totalDuration) {
-                                setTimeout(renderFrame, 0);
-                            } else {
-                                this.capturer.stop();
-                                this.capturer.save((blob) => {
-                                    resolve(blob);
-                                });
-                            }
-                        };
-
-                        renderFrame();
-
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-            }
-
-            getCurrentSlide(slides, time) {
-                for (let slide of slides) {
-                    if (time >= slide.start && time < slide.end) {
-                        return slide;
-                    }
-                }
-                return null;
-            }
-
-            renderSlide(content) {
-                const renderer = new CanvasMarkupRenderer(this.ctx, this.canvas.width, this.canvas.height, {
-                    fontSize: 28,
-                    lineHeight: 42
-                });
-                renderer.render(content);
-            }
-
-            createFinalVideoPlayer(videoBlob, audioElement, prompt, messageContainer) {
-                const videoUrl = URL.createObjectURL(videoBlob);
-                
-                messageContainer.innerHTML = `
-                    ✅ <strong>Video created successfully!</strong><br>
-                    <em>"${prompt}"</em>
-                    
-                    <div class="video-container">
-                        <video id="generatedVideo" controls style="width: 100%;">
-                            <source src="${videoUrl}" type="video/webm">
-                        </video>
-                    </div>
-                    
-                   <!-- <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button onclick="this.parentElement.parentElement.querySelector('video').play(); this.parentElement.parentElement.querySelector('audio').play();" 
-                                style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
-                            ▶️ Play with Audio
-                        </button>
-                        <a href="${videoUrl}" download="explainer-video.webm" 
-                           style="background: #007bff; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; display: inline-block;">
-                            📥 Download Video
-                        </a>
-                    </div> -->
-                    
-                    <audio style="display: none;" id="generatedAudio">
-                        <source src="${audioElement.src}" type="audio/wav">
-                    </audio>
-                `;
-
-                // Setup synchronized playback
-                const video = messageContainer.querySelector('#generatedVideo');
-                const audio = messageContainer.querySelector('#generatedAudio');
-                
-                if (video && audio) {
-                    video.addEventListener('play', () => audio.play());
-                    video.addEventListener('pause', () => audio.pause());
-                    video.addEventListener('seeked', () => {
-                        audio.currentTime = video.currentTime;
-                    });
-                }
-            }
-        }
-
-        // Enhanced Markup Renderer (same as your original code)
-        class CanvasMarkupRenderer {
-            constructor(ctx, width, height, options = {}) {
-                this.ctx = ctx;
-                this.width = width;
-                this.height = height;
-                this.x = options.x || 50;
-                this.y = options.y || 50;
-                this.cursorX = this.x;
-                this.cursorY = this.y;
-                
-                this.config = {
-                    defaultFontSize: options.fontSize || 32,
-                    lineHeight: options.lineHeight || 48,
-                    maxWidth: width - (this.x * 2),
-                    listIndent: 40,
-                    colors: {
-                        text: '#000000',
-                        background: '#ffffff'
-                    }
-                };
-                
-                this.styleStack = [];
-                this.listStack = [];
-                this.currentStyle = this.createDefaultStyle();
-                this.currentListContext = null;
-            }
-            
-            createDefaultStyle() {
-                return {
-                    bold: false,
-                    italic: false,
-                    fontSize: this.config.defaultFontSize,
-                    fontFamily: "Arial",
-                    color: this.config.colors.text,
-                    superscript: false,
-                    subscript: false
-                };
-            }
-            
-            render(markup) {
-                this.ctx.fillStyle = this.config.colors.background;
-                this.ctx.fillRect(0, 0, this.width, this.height);
-                
-                this.cursorX = this.x;
-                this.cursorY = this.y + this.config.defaultFontSize;
-                
-                try {
-                    const tokens = this.tokenize(markup);
-                    this.processTokens(tokens);
-                } catch (error) {
-                    console.error("Markup rendering error:", error);
-                    this.renderErrorText("Error rendering markup");
-                }
-            }
-            
-            tokenize(markup) {
-                const regex = /\[([a-zA-Z0-9]+)(?:\s+([^[\]]*))?\]|\[\/([a-zA-Z0-9]+)\]|([^[\]]+)/g;
-                const tokens = [];
-                let match;
-                
-                while ((match = regex.exec(markup)) !== null) {
-                    if (match[1]) {
-                        const attributes = this.parseAttributes(match[2] || "");
-                        tokens.push({
-                            type: 'open',
-                            tag: match[1].toLowerCase(),
-                            attributes
-                        });
-                    } else if (match[3]) {
-                        tokens.push({
-                            type: 'close',
-                            tag: match[3].toLowerCase()
-                        });
-                    } else if (match[4]) {
-                        const text = match[4].trim();
-                        if (text) {
-                            tokens.push({
-                                type: 'text',
-                                content: text
-                            });
-                        }
-                    }
-                }
-                
-                return tokens;
-            }
-            
-            parseAttributes(attrString) {
-                const attributes = {};
-                if (!attrString) return attributes;
-                
-                const attrRegex = /(\w+)=(?:"([^"]*)"|([^\s]+))/g;
-                let match;
-                
-                while ((match = attrRegex.exec(attrString)) !== null) {
-                    attributes[match[1]] = match[2] || match[3];
-                }
-                
-                return attributes;
-            }
-            
-            processTokens(tokens) {
-                for (const token of tokens) {
-                    switch (token.type) {
-                        case 'open':
-                            this.handleOpenTag(token.tag, token.attributes);
-                            break;
-                        case 'close':
-                            this.handleCloseTag(token.tag);
-                            break;
-                        case 'text':
-                            this.renderText(token.content);
-                            break;
-                    }
-                }
-            }
-            
-            handleOpenTag(tag, attributes) {
-                this.styleStack.push({
-                    style: { ...this.currentStyle },
-                    listContext: this.currentListContext,
-                    cursorX: this.cursorX,
-                    cursorY: this.cursorY
-                });
-                
-                switch (tag) {
-                    case 'b':
-                    case 'strong':
-                        this.currentStyle.bold = true;
-                        break;
-                        
-                    case 'i':
-                    case 'em':
-                        this.currentStyle.italic = true;
-                        break;
-                        
-                    case 'h1':
-                    case 'h2':
-                    case 'h3':
-                    case 'h4':
-                    case 'h5':
-                    case 'h6':
-                        const level = parseInt(tag.charAt(1));
-                        this.currentStyle.fontSize = this.config.defaultFontSize + (7 - level) * 8;
-                        this.currentStyle.bold = true;
-                        this.addLineBreak();
-                        break;
-                        
-                    case 'color':
-                        if (attributes.value) {
-                            this.currentStyle.color = this.parseColor(attributes.value);
-                        }
-                        break;
-                        
-                    case 'size':
-                        if (attributes.value) {
-                            this.currentStyle.fontSize = parseInt(attributes.value) || this.config.defaultFontSize;
-                        }
-                        break;
-                        
-                    case 'sup':
-                        this.currentStyle.superscript = true;
-                        this.currentStyle.fontSize *= 0.7;
-                        break;
-                        
-                    case 'sub':
-                        this.currentStyle.subscript = true;
-                        this.currentStyle.fontSize *= 0.7;
-                        break;
-                        
-                    case 'br':
-                        this.addLineBreak();
-                        break;
-                        
-                    case 'list':
-                        this.startList();
-                        break;
-                        
-                    case 'li':
-                        this.startListItem();
-                        break;
-                }
-            }
-            
-            handleCloseTag(tag) {
-                const prevState = this.styleStack.pop();
-                
-                if (prevState) {
-                    if (tag === 'li') {
-                        this.endListItem();
-                    } else if (tag === 'list') {
-                        this.endList();
-                    } else if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tag)) {
-                        this.addLineBreak();
-                    }
-                    
-                    this.currentStyle = prevState.style;
-                    this.currentListContext = prevState.listContext;
-                    
-                    if (tag === 'sub' || tag === 'sup') {
-                        this.cursorY = prevState.cursorY;
-                    }
-                }
-            }
-            
-            startList() {
-                this.listStack.push(this.currentListContext);
-                this.currentListContext = {
-                    type: 'ul',
-                    index: 1,
-                    level: this.listStack.length
-                };
-                this.addLineBreak();
-            }
-            
-            endList() {
-                this.currentListContext = this.listStack.pop();
-                this.addLineBreak();
-            }
-            
-            startListItem() {
-                this.addLineBreak();
-                this.cursorX = this.x + (this.config.listIndent * (this.currentListContext?.level || 1));
-                this.renderListPrefix();
-            }
-            
-            endListItem() {
-                // Handled by line break
-            }
-            
-            renderListPrefix() {
-                if (!this.currentListContext) return;
-                
-                this.applyTextStyle();
-                const prefix = '• ';
-                this.ctx.fillText(prefix, this.cursorX, this.cursorY);
-                this.cursorX += this.ctx.measureText(prefix).width;
-            }
-            
-            renderText(content) {
-                const words = content.split(/\s+/).filter(word => word.length > 0);
-                
-                for (let i = 0; i < words.length; i++) {
-                    this.renderWord(words[i]);
-                    if (i < words.length - 1) {
-                        this.cursorX += this.ctx.measureText(' ').width;
-                    }
-                }
-            }
-            
-            renderWord(word) {
-                this.applyTextStyle();
-                const wordWidth = this.ctx.measureText(word).width;
-                
-                if (this.cursorX + wordWidth > this.x + this.config.maxWidth) {
-                    this.addLineBreak();
-                }
-                
-                let renderY = this.cursorY;
-                if (this.currentStyle.superscript) {
-                    renderY -= this.currentStyle.fontSize * 0.3;
-                } else if (this.currentStyle.subscript) {
-                    renderY += this.currentStyle.fontSize * 0.3;
-                }
-                
-                this.ctx.fillStyle = this.currentStyle.color;
-                this.ctx.fillText(word, this.cursorX, renderY);
-                
-                this.cursorX += wordWidth;
-            }
-            
-            applyTextStyle() {
-                let fontWeight = this.currentStyle.bold ? 'bold' : 'normal';
-                let fontStyle = this.currentStyle.italic ? 'italic' : 'normal';
-                
-                this.ctx.font = `${fontStyle} ${fontWeight} ${this.currentStyle.fontSize}px ${this.currentStyle.fontFamily}`;
-                this.ctx.textAlign = 'left';
-                this.ctx.textBaseline = 'alphabetic';
-            }
-            
-            addLineBreak() {
-                this.cursorY += this.config.lineHeight;
-                this.cursorX = this.x + (this.currentListContext ? 
-                    this.config.listIndent * this.currentListContext.level : 0);
-            }
-            
-            parseColor(colorValue) {
-                const namedColors = {
-                    'red': '#FF0000',
-                    'green': '#00FF00',
-                    'blue': '#0000FF',
-                    'black': '#000000',
-                    'white': '#FFFFFF',
-                    'gray': '#808080',
-                    'yellow': '#FFFF00',
-                    'cyan': '#00FFFF',
-                    'magenta': '#FF00FF'
-                };
-                
-                if (colorValue.startsWith('#')) {
-                    return colorValue;
-                } else if (namedColors[colorValue.toLowerCase()]) {
-                    return namedColors[colorValue.toLowerCase()];
-                }
-                
-                return this.config.colors.text;
-            }
-            
-            renderErrorText(errorMessage) {
-                this.ctx.fillStyle = '#FF0000';
-                this.ctx.font = '24px Arial';
-                this.ctx.fillText(errorMessage, this.x, this.y + 50);
-            }
-        }
-
-        // Initialize the chatbot when the page loads
-        window.addEventListener('load', () => {
-            new ChatBot();
-        });
-    </script>
+    <!-- JavaScript Modules -->
+    <script src="script.min.js"></script>
 </body>
 </html>
