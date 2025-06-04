@@ -1,0 +1,158 @@
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes progressPulse {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes slideInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.slide-in-up {
+    animation: slideInUp 0.4s ease-out forwards;
+}
+
+.typing-dot {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.float-animation {
+    animation: float 6s ease-in-out infinite;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.progress-gradient {
+    background: linear-gradient(90deg, #8b5cf6, #ec4899, #8b5cf6);
+    background-size: 200% 200%;
+    animation: progressPulse 2s ease infinite;
+}
+
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #4c1d95 50%, #0f172a 100%);
+    color: white;
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.video-rendering-glow {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    .mobile-examples-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .mobile-example-card {
+        background: rgba(139, 92, 246, 0.1);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 0.75rem;
+        padding: 0.75rem;
+        text-align: center;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .mobile-example-card:hover {
+        background: rgba(139, 92, 246, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .mobile-example-card:active {
+        transform: translateY(0);
+    }
+    
+    .mobile-chat-input {
+        position: sticky;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+    }
+    
+    .mobile-header {
+        position: sticky;
+        top: 0;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 10;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #8b5cf6, #ec4899);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #7c3aed, #db2777);
+}
+
+/* Touch-friendly buttons */
+@media (max-width: 768px) {
+    button, .example-btn, .mobile-example-card {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
